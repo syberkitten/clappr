@@ -7,7 +7,10 @@
  * and the player state.
  */
 
-var _ = require('underscore')
+var pick = require('lodash.pick')
+var assign = require('lodash.assign')
+var isArray = require('lodash.isarray')
+var without = require('lodash.without')
 var $ = require('zepto')
 
 var UIObject = require('ui_object')
@@ -81,7 +84,7 @@ class Core extends UIObject {
   }
 
   resize(options) {
-    var size = _.pick(options, 'width', 'height')
+    var size = pick(options, 'width', 'height')
     this.el.style.height = `${size.height}px`;
     this.el.style.width = `${size.width}px`;
     PlayerInfo.previousSize = PlayerInfo.currentSize
@@ -106,7 +109,7 @@ class Core extends UIObject {
   }
 
   load(sources) {
-    sources = _.isArray(sources) ? sources : [sources.toString()];
+    sources = isArray(sources) ? sources : [sources.toString()];
     _(this.containers).each((container) => container.destroy())
     this.containerFactory.options = _(this.options).extend({sources})
     this.containerFactory.createContainers().then((containers) => {
@@ -145,7 +148,7 @@ class Core extends UIObject {
 
   removeContainer(container) {
     this.stopListening(container)
-    this.containers = _.without(this.containers, container)
+    this.containers = without(this.containers, container)
   }
 
   appendContainer(container) {
@@ -155,7 +158,7 @@ class Core extends UIObject {
   }
 
   setupContainers(containers) {
-    _.map(containers, this.appendContainer, this)
+    containers.map(this.appendContainer.bind(this))
     this.setupMediaControl(this.getCurrentContainer())
     this.render()
     this.$el.appendTo(this.options.parentElement)
@@ -172,7 +175,7 @@ class Core extends UIObject {
     if (this.mediaControl) {
       this.mediaControl.setContainer(container)
     } else {
-      this.mediaControl = this.createMediaControl(_.extend({container: container}, this.options))
+      this.mediaControl = this.createMediaControl(assign({container: container}, this.options))
       this.listenTo(this.mediaControl, Events.MEDIACONTROL_FULLSCREEN, this.toggleFullscreen)
       this.listenTo(this.mediaControl, Events.MEDIACONTROL_SHOW, this.onMediaControlShow.bind(this, true))
       this.listenTo(this.mediaControl, Events.MEDIACONTROL_HIDE, this.onMediaControlShow.bind(this, false))
@@ -226,7 +229,7 @@ class Core extends UIObject {
 
     this.options.width = this.options.width || this.$el.width()
     this.options.height = this.options.height || this.$el.height()
-    PlayerInfo.previousSize = PlayerInfo.currentSize = _.pick(this.options, 'width', 'height')
+    PlayerInfo.previousSize = PlayerInfo.currentSize = pick(this.options, 'width', 'height')
     this.updateSize()
 
     return this

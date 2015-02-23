@@ -6,7 +6,7 @@
  * The MediaControl is responsible for displaying the Player controls.
  */
 
-var _ = require('underscore')
+var isEmpty = require('lodash.isempty')
 var $ = require('zepto')
 var JST = require('../../base/jst')
 var Styler = require('../../base/styler')
@@ -68,7 +68,7 @@ class MediaControl extends UIObject {
       right: ['volume'],
       default: ['position', 'seekbar', 'duration']
     }
-    this.settings = _.isEmpty(this.container.settings) ? this.settings : this.container.settings
+    this.settings = isEmpty(this.container.settings) ? this.settings : this.container.settings
     this.disabled = false
     if (this.container.mediaControlDisabled || this.options.chromeless) {
       this.disable()
@@ -352,7 +352,7 @@ class MediaControl extends UIObject {
   }
 
   settingsUpdate() {
-    if (this.container.getPlaybackType() !== null && !_.isEmpty(this.container.settings)) {
+    if (this.container.getPlaybackType() !== null && !isEmpty(this.container.settings)) {
       this.settings = this.container.settings
       this.render()
     } else {

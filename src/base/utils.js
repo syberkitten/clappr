@@ -2,26 +2,28 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var _ = require('underscore');
+var assign = require('lodash.assign')
+var rest = require('lodash.rest')
+var compact = require('lodash.compact')
 var Browser = require('browser');
 
 var extend = function(protoProps, staticProps) {
   var parent = this;
   var child;
 
-  if (protoProps && _.has(protoProps, 'constructor')) {
+  if (protoProps && protoProps['constructor'] !== undefined) {
     child = protoProps.constructor;
   } else {
     child = function(){ return parent.apply(this, arguments); };
   }
 
-  _.extend(child, parent, staticProps);
+  assign(child, parent, staticProps);
 
   var Surrogate = function(){ this.constructor = child; };
   Surrogate.prototype = parent.prototype;
   child.prototype = new Surrogate();
 
-  if (protoProps) _.extend(child.prototype, protoProps);
+  if (protoProps) assign(child.prototype, protoProps);
 
   child.__super__ = parent.prototype;
 
@@ -123,13 +125,13 @@ class Config {
 
 
 var seekStringToSeconds = function(url) {
-  var elements = _.rest(_.compact(url.match(/t=([0-9]*)h?([0-9]*)m?([0-9]*)s/))).reverse();
+  var elements = rest(compact(url.match(/t=([0-9]*)h?([0-9]*)m?([0-9]*)s/))).reverse();
   var seconds = 0;
   var factor = 1;
-  _.each(elements, function (el) {
+  elements.forEach((el) => {
     seconds += (parseInt(el) * factor)
     factor = factor * 60
-  }, this);
+  });
   return seconds;
 };
 

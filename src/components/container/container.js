@@ -8,7 +8,6 @@
 
 var UIObject = require('ui_object');
 var Styler = require('../../base/styler');
-var _ = require('underscore');
 var Events = require('events')
 
 class Container extends UIObject {
@@ -45,11 +44,6 @@ class Container extends UIObject {
     this.listenTo(this.playback, Events.PLAYBACK_ENDED, this.ended);
     this.listenTo(this.playback, Events.PLAYBACK_PLAY, this.playing);
     this.listenTo(this.playback, Events.PLAYBACK_ERROR, this.error);
-  }
-
-  with(klass) {
-    _.extend(this, klass);
-    return this;
   }
 
   playbackStateChanged() {

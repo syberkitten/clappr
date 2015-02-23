@@ -2,17 +2,13 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-var BaseObject = require('base_object');
-var _ = require('underscore');
+var BaseObject = require('base_object')
 var PlayerInfo = require('player_info')
+var uniq = require('lodash.uniq')
+var union = require('lodash.union')
 
 /* Playback Plugins */
 var HTML5VideoPlayback = require('html5_video');
-var FlashVideoPlayback = require('flash');
-var HTML5AudioPlayback = require('html5_audio');
-var HLSVideoPlayback = require('hls');
-var HTMLImgPlayback = require('html_img');
-var NoOp = require('../../playbacks/no_op');
 
 /* Container Plugins */
 var SpinnerThreeBouncePlugin = require('../../plugins/spinner_three_bounce');
@@ -28,7 +24,7 @@ var DVRControls = require('../../plugins/dvr_controls');
 class Loader extends BaseObject {
   constructor(externalPlugins) {
     super()
-    this.playbackPlugins = [HTML5VideoPlayback, FlashVideoPlayback, HTML5AudioPlayback, HLSVideoPlayback, HTMLImgPlayback, NoOp]
+    this.playbackPlugins = [HTML5VideoPlayback]
     this.containerPlugins = [SpinnerThreeBouncePlugin, WaterMarkPlugin, PosterPlugin, StatsPlugin, GoogleAnalyticsPlugin, ClickToPausePlugin]
     this.corePlugins = [DVRControls]
     if (externalPlugins) {
@@ -38,15 +34,15 @@ class Loader extends BaseObject {
 
   addExternalPlugins(plugins) {
     var pluginName = function(plugin) { return plugin.prototype.name }
-    if (plugins.playback) { this.playbackPlugins = _.uniq(plugins.playback.concat(this.playbackPlugins), pluginName) }
-    if (plugins.container) { this.containerPlugins = _.uniq(plugins.container.concat(this.containerPlugins), pluginName) }
-    if (plugins.core) { this.corePlugins = _.uniq(plugins.core.concat(this.corePlugins), pluginName) }
+    if (plugins.playback) { this.playbackPlugins = uniq(plugins.playback.concat(this.playbackPlugins), pluginName) }
+    if (plugins.container) { this.containerPlugins = uniq(plugins.container.concat(this.containerPlugins), pluginName) }
+    if (plugins.core) { this.corePlugins = uniq(plugins.core.concat(this.corePlugins), pluginName) }
     PlayerInfo.playbackPlugins = this.playbackPlugins
   }
 
   getPlugin(name) {
-    var allPlugins = _.union(this.containerPlugins, this.playbackPlugins, this.corePlugins)
-    return _.find(allPlugins, function(plugin) { return plugin.prototype.name === name })
+    var allPlugins = union(this.containerPlugins, this.playbackPlugins, this.corePlugins)
+    return allPlugins.find((plugin) => { return plugin.prototype.name === name })
   }
 }
 

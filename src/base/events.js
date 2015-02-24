@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 
 var execOnce = require('lodash.once')
-var isEmpty = require('lodash.isempty')
 var uniqueId = require('lodash.uniqueid')
 var Log = require('../plugins/log').getInstance()
 
@@ -79,7 +78,7 @@ class Events {
     for (var id in listeningTo) {
       obj = listeningTo[id]
       obj.off(name, callback, this)
-      if (remove || isEmpty(obj._events)) delete this._listeningTo[id]
+      if (remove || Object.keys(obj._events).length === 0) delete this._listeningTo[id]
     }
     return this
   }

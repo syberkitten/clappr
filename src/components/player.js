@@ -6,9 +6,6 @@ var BaseObject = require('base_object')
 var CoreFactory = require('./core_factory')
 var Loader = require('./loader')
 var assign = require('lodash.assign')
-var compact = require('lodash.compact')
-var flatten = require('lodash.flatten')
-var isEmpty = require('lodash.isEmpty')
 var ScrollMonitor = require('scrollmonitor');
 var PlayerInfo = require('player_info')
 
@@ -58,8 +55,9 @@ class Player extends BaseObject {
   }
 
   normalizeSources(options) {
-    var sources = compact(flatten([options.source, options.sources]))
-    return isEmpty(sources)? ['no.op'] : sources
+    options.source = options.source && options.source.constructor === String ? [options.source] : options.source;
+    var sources = [options.source, options.sources].reduce((a, b) => a.concat(b)).filter((s) => s && s !== "")
+    return sources.length === 0 ? ['no.op'] : sources
   }
 
   resize(size) {

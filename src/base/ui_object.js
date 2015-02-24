@@ -6,7 +6,6 @@ var $ = require('zepto')
 var uniqueId = require('lodash.uniqueid')
 var result = require('lodash.result')
 var assign = require('lodash.assign')
-var isFunction = require('lodash.isfunction')
 var extend = require('./utils').extend
 var BaseObject = require('base_object')
 
@@ -50,7 +49,7 @@ class UIObject extends BaseObject {
     this.undelegateEvents()
     for (var key in events) {
       var method = events[key]
-      if (!isFunction(method)) method = this[events[key]]
+      if ((method && method.constructor !== Function)) method = this[events[key]]
       if (!method) continue
 
       var match = key.match(delegateEventSplitter)

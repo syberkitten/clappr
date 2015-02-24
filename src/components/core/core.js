@@ -9,8 +9,6 @@
 
 var pick = require('lodash.pick')
 var assign = require('lodash.assign')
-var isArray = require('lodash.isarray')
-var without = require('lodash.without')
 var $ = require('zepto')
 
 var UIObject = require('ui_object')
@@ -109,7 +107,7 @@ class Core extends UIObject {
   }
 
   load(sources) {
-    sources = isArray(sources) ? sources : [sources.toString()];
+    sources = sources && sources.constructor === Array ? sources : [sources.toString()];
     _(this.containers).each((container) => container.destroy())
     this.containerFactory.options = _(this.options).extend({sources})
     this.containerFactory.createContainers().then((containers) => {
@@ -148,7 +146,7 @@ class Core extends UIObject {
 
   removeContainer(container) {
     this.stopListening(container)
-    this.containers = without(this.containers, container)
+    this.containers = this.containers.filter((c) => c !== container)
   }
 
   appendContainer(container) {

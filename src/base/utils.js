@@ -3,8 +3,6 @@
 // license that can be found in the LICENSE file.
 
 var assign = require('lodash.assign')
-var rest = require('lodash.rest')
-var compact = require('lodash.compact')
 var Browser = require('browser');
 
 var extend = function(protoProps, staticProps) {
@@ -125,7 +123,8 @@ class Config {
 
 
 var seekStringToSeconds = function(url) {
-  var elements = rest(compact(url.match(/t=([0-9]*)h?([0-9]*)m?([0-9]*)s/))).reverse();
+  var rest = (url.match(/t=([0-9]*)h?([0-9]*)m?([0-9]*)s/) || []).filter((s) => s && s !== '')
+  var elements = rest.splice(1, rest.length).reverse();
   var seconds = 0;
   var factor = 1;
   elements.forEach((el) => {

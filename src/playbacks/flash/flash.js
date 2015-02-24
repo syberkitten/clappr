@@ -7,7 +7,6 @@ var Styler = require('../../base/styler')
 var JST = require('../../base/jst')
 var Mediator = require('mediator')
 var template = require('lodash.template')
-var isString = require('lodash.isstring')
 var $ = require('zepto')
 var Browser = require('browser')
 var seekStringToSeconds = require('../../base/utils').seekStringToSeconds
@@ -203,9 +202,9 @@ Flash.canPlay = function(resource) {
   if (!Browser.hasFlash) {
     return false
   } else if ((!Browser.isMobile && Browser.isFirefox) || Browser.isLegacyIE) {
-    return isString(resource) && !!resource.match(/(.*)\.(mp4|mov|f4v|3gpp|3gp)/)
+    return (resource && resource.constructor === String) && !!resource.match(/(.*)\.(mp4|mov|f4v|3gpp|3gp)/)
   } else {
-    return isString(resource) && !!resource.match(/(.*)\.(mov|f4v|3gpp|3gp)/)
+    return (resource && resource.constructor === String) && !!resource.match(/(.*)\.(mov|f4v|3gpp|3gp)/)
   }
 }
 
